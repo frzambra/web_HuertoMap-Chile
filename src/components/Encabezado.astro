@@ -1,0 +1,19 @@
+---
+import Logo from './Logo.astro';
+import { nav } from '../data/textos';
+---
+<header class="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-noche/75 text-noche-texto backdrop-blur-md">
+  <div class="contenedor flex h-14 items-center justify-between gap-4">
+    <a href="#inicio" aria-label="HuertoMap-Chile, inicio"><Logo /></a>
+    <nav aria-label="Secciones" class="hidden md:block">
+      <ul class="flex items-center gap-7 text-sm text-noche-suave">
+        {nav.map((n) => (
+          <li><a href={n.href} class="transition-colors hover:text-noche-texto">{n.texto}</a></li>
+        ))}
+      </ul>
+    </nav>
+    <a href="#contacto" class="rounded-full border border-white/20 px-3.5 py-1.5 text-sm transition-colors hover:border-brillo hover:text-brillo">
+      Contacto
+    </a>
+  </div>
+</header>

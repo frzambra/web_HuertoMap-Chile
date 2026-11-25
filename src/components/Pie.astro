@@ -1,0 +1,16 @@
+---
+import Logo from './Logo.astro';
+import { pie } from '../data/textos';
+const anio = new Date().getFullYear();
+---
+<footer class="bg-noche py-12 text-sm text-noche-suave">
+  <div class="contenedor flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+    <div>
+      <Logo class="text-noche-texto" />
+      <p class="mt-4">© {anio} HuertoMap-Chile</p>
+    </div>
+    <ul class="space-y-1 md:text-right">
+      {pie.creditos.map((c) => <li>{c}</li>)}
+    </ul>
+  </div>
+</footer>

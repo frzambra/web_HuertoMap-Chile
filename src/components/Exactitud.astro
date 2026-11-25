@@ -1,0 +1,54 @@
+---
+import Cabecera from './Cabecera.astro';
+import { exactitud as t } from '../data/textos';
+---
+<section aria-labelledby="exactitud" class="border-t border-linea py-24 sm:py-32">
+  <div class="contenedor">
+    <Cabecera id="exactitud" antetitulo={t.antetitulo} titulo={t.titulo} bajada={t.bajada} />
+
+    <div class="mt-16 grid gap-px overflow-hidden rounded-xl border border-linea bg-linea sm:grid-cols-3" data-revelar>
+      {t.destacadas.map((d) => (
+        <div class="bg-superficie p-7 sm:p-8">
+          <p class="cifra text-5xl font-medium text-acento sm:text-6xl">{d.valor}</p>
+          <p class="mt-4 max-w-[16rem] leading-snug text-suave">{d.texto}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-10 overflow-x-auto" data-revelar>
+      <table class="w-full border-collapse text-left">
+        <caption class="sr-only">Exactitud por capa en la temporada del catastro y en una temporada no vista</caption>
+        <thead>
+          <tr class="border-b border-texto/80 text-sm">
+            <th scope="col" class="py-3 pr-4 font-medium">{t.cabeceras.capa}</th>
+            <th scope="col" class="hidden py-3 pr-4 font-medium text-suave sm:table-cell">Métrica</th>
+            <th scope="col" class="py-3 pr-4 text-right font-medium">{t.cabeceras.misma}</th>
+            <th scope="col" class="py-3 text-right font-medium">{t.cabeceras.nueva}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {t.filas.map((f) => (
+            <tr class="border-b border-linea">
+              <th scope="row" class="py-4 pr-4 font-medium">
+                {f.capa}
+                <span class="mt-1 block text-xs font-normal text-suave sm:hidden">{f.metrica}</span>
+              </th>
+              <td class="hidden py-4 pr-4 text-sm text-suave sm:table-cell">{f.metrica}</td>
+              <td class="cifra py-4 pr-4 text-right text-xl sm:text-2xl">{f.misma}</td>
+              <td class="cifra py-4 text-right text-xl text-acento sm:text-2xl">{f.nueva}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <aside class="mt-12 grid gap-6 lg:grid-cols-12" aria-label="Limitaciones" data-revelar>
+      <p class="etiqueta text-suave lg:col-span-3">Limitaciones</p>
+      <ul class="space-y-3 text-sm leading-relaxed text-suave lg:col-span-9">
+        {t.limitaciones.map((l) => (
+          <li class="flex gap-3"><span class="mt-2 h-1 w-1 shrink-0 rounded-full bg-suave" aria-hidden="true"></span>{l}</li>
+        ))}
+      </ul>
+    </aside>
+  </div>
+</section>

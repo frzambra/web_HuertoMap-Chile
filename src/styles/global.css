@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+/* ---------- Design tokens ---------- */
+:root {
+  --c-fondo: #f6f5f1;
+  --c-superficie: #ffffff;
+  --c-texto: #101512;
+  --c-suave: #4f5652;
+  --c-linea: #dedcd4;
+  --c-acento: #1d6b44;
+  --c-acento-suave: #e3efe7;
+  --c-noche: #0b0e0c;
+  --c-noche-texto: #e9ece9;
+  --c-noche-suave: #9aa39d;
+  --c-noche-linea: #232a26;
+  --c-brillo: #5ee39a;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --c-fondo: #0e1110;
+    --c-superficie: #151a17;
+    --c-texto: #e9ece9;
+    --c-suave: #a3aca6;
+    --c-linea: #26302b;
+    --c-acento: #5ee39a;
+    --c-acento-suave: #16271d;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --c-fondo: #0e1110;
+  --c-superficie: #151a17;
+  --c-texto: #e9ece9;
+  --c-suave: #a3aca6;
+  --c-linea: #26302b;
+  --c-acento: #5ee39a;
+  --c-acento-suave: #16271d;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter Tight Variable", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+  --color-fondo: var(--c-fondo);
+  --color-superficie: var(--c-superficie);
+  --color-texto: var(--c-texto);
+  --color-suave: var(--c-suave);
+  --color-linea: var(--c-linea);
+  --color-acento: var(--c-acento);
+  --color-acento-suave: var(--c-acento-suave);
+  --color-noche: var(--c-noche);
+  --color-noche-texto: var(--c-noche-texto);
+  --color-noche-suave: var(--c-noche-suave);
+  --color-noche-linea: var(--c-noche-linea);
+  --color-brillo: var(--c-brillo);
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--c-fondo);
+    color: var(--c-texto);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+  p { text-wrap: pretty; }
+  :focus-visible {
+    outline: 2px solid var(--c-brillo);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  ::selection { background: var(--c-brillo); color: #06140c; }
+}
+
+/* ---------- Components ---------- */
+@layer components {
+  .contenedor {
+    width: 100%;
+    max-width: 75rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) { .contenedor { padding-inline: 1.5rem; } }
+  @media (min-width: 1024px) { .contenedor { padding-inline: 2rem; } }
+
+  .etiqueta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .cifra {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+}
+
+/* Reveal on scroll, only when motion is welcome and JS is running. */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-revelar] {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.7s cubic-bezier(.2,.7,.2,1), transform 0.7s cubic-bezier(.2,.7,.2,1);
+  }
+  .js [data-revelar].visible { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

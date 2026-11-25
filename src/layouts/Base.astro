@@ -1,0 +1,64 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/inter-tight';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+import { getImage } from 'astro:assets';
+import heroImg from '../assets/mapa-especies.png';
+import { sitio } from '../data/textos';
+import { ruta } from '../data/ruta';
+
+const og = await getImage({ src: heroImg, width: 1200, height: 630, fit: 'cover', format: 'png' });
+const canonical = new URL(import.meta.env.BASE_URL, Astro.site);
+const ogUrl = new URL(og.src, Astro.site);
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: sitio.nombre,
+  description: sitio.descripcion,
+  inLanguage: 'es-CL',
+  url: canonical.href,
+};
+---
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{sitio.titulo}</title>
+    <meta name="description" content={sitio.descripcion} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="icon" type="image/svg+xml" href={ruta('favicon.svg')} />
+    <meta name="theme-color" content="#0b0e0c" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:title" content={sitio.titulo} />
+    <meta property="og:description" content={sitio.descripcion} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogUrl.href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+  </head>
+  <body class="min-h-dvh">
+    <a href="#contenido" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:bg-brillo focus:px-3 focus:py-2 focus:text-noche">
+      Saltar al contenido
+    </a>
+    <slot />
+    <script>
+      const els = document.querySelectorAll<HTMLElement>('[data-revelar]');
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              io.unobserve(e.target);
+            }
+          }
+        },
+        { rootMargin: '0px 0px -8% 0px' },
+      );
+      els.forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>

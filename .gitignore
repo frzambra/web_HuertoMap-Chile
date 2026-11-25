@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+scripts/.tmp/
+scripts/__pycache__/
+*.tif
+*.tiff
+.env
+.DS_Store

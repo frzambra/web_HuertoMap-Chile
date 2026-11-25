@@ -1,0 +1,18 @@
+---
+// Wordmark: a 3x3 pixel grid (one classified map cell) + name.
+interface Props { class?: string }
+const { class: clase = '' } = Astro.props;
+const celdas = ['g', 'h', 'h', 'g', 'c', 'h', 'g', 'g', 'h'];
+const color: Record<string, string> = { g: 'currentColor', h: '#5ee39a', c: '#d7263d' };
+---
+<span class={`inline-flex items-center gap-2.5 ${clase}`}>
+  <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
+    {celdas.map((k, j) => (
+      <rect x={(j % 3) * 8} y={Math.floor(j / 3) * 8} width="6" height="6"
+        fill={color[k]} opacity={k === 'g' ? 0.25 : 1} />
+    ))}
+  </svg>
+  <span class="font-display text-[0.95rem] font-semibold tracking-tight">
+    HuertoMap<span class="opacity-50">-Chile</span>
+  </span>
+</span>

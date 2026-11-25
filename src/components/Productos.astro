@@ -1,0 +1,37 @@
+---
+import Cabecera from './Cabecera.astro';
+import { productos } from '../data/textos';
+// Small pictograms: same 3x3 grid, each highlighting what the layer answers.
+const celdas = [
+  ['h', 'h', 'n', 'h', 'h', 'n', 'n', 'n', 'h'],
+  ['c', 'm', 'n', 'a', 'c', 'n', 'n', 'n', 'm'],
+  ['c', 'g', 'n', 'g', 'c', 'n', 'n', 'n', 'g'],
+];
+const color: Record<string, string> = {
+  h: '#5ee39a', c: '#d7263d', m: '#2fa35f', a: '#4f63d8', g: 'var(--c-linea)', n: 'transparent',
+};
+---
+<section aria-labelledby="productos" class="py-24 sm:py-32">
+  <div class="contenedor">
+    <Cabecera id="productos" antetitulo={productos.antetitulo} titulo={productos.titulo} bajada={productos.bajada} />
+    <ol class="mt-16 grid gap-px overflow-hidden rounded-xl border border-linea bg-linea md:grid-cols-3">
+      {productos.items.map((p, i) => (
+        <li class="flex flex-col bg-superficie p-7 sm:p-8" data-revelar style={`transition-delay:${i * 80}ms`}>
+          <div class="flex items-start justify-between">
+            <span class="etiqueta text-suave">0{i + 1}</span>
+            <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+              {celdas[i].map((k, j) => (
+                <rect x={(j % 3) * 10} y={Math.floor(j / 3) * 10} width="8.5" height="8.5"
+                  fill={color[k]} stroke={k === 'n' ? 'var(--c-linea)' : 'none'} />
+              ))}
+            </svg>
+          </div>
+          <h3 class="mt-10 text-xl font-semibold">{p.nombre}</h3>
+          <p class="mt-3 flex-1 leading-relaxed text-suave">{p.texto}</p>
+          <p class="cifra mt-8 border-t border-linea pt-5 text-2xl font-medium text-acento">{p.dato}</p>
+        </li>
+      ))}
+    </ol>
+    <p class="mt-4 text-sm text-suave">{productos.notaDatos}</p>
+  </div>
+</section>

@@ -1,0 +1,176 @@
+---
+import { Image } from 'astro:assets';
+import Cabecera from './Cabecera.astro';
+import heroImg from '../assets/mapa-especies.png';
+import { mapa as t } from '../data/textos';
+import { ESPECIES, HUERTO } from '../data/especies';
+import meta from '../data/mapa.json';
+import { ruta } from '../data/ruta';
+
+const config = {
+  bounds: meta.bounds,
+  minzoom: meta.minzoom,
+  maxzoom: meta.maxzoom,
+  tiles: {
+    especies: ruta('tiles/especies/{z}/{x}/{y}.png'),
+    huerto: ruta('tiles/huerto/{z}/{x}/{y}.png'),
+  },
+};
+---
+<section aria-labelledby="mapa" class="bg-noche py-24 text-noche-texto sm:py-32">
+  <div class="contenedor">
+    <Cabecera id="mapa" antetitulo={t.antetitulo} titulo={t.titulo} bajada={t.bajada} oscuro />
+
+    <div class="mt-14 grid gap-6 lg:grid-cols-12" data-revelar>
+      <div class="relative overflow-hidden rounded-xl border border-noche-linea lg:col-span-9">
+        <div id="mapa-lienzo" data-config={JSON.stringify(config)}
+          class="relative aspect-[4/5] w-full sm:aspect-[16/11]"
+          role="region" aria-label="Mapa interactivo de huertos frutales en Curicó y Molina">
+          <Image src={heroImg} alt="Vista estática del mapa de especies en Curicó y Molina"
+            widths={[600, 1200]} sizes="(min-width: 1024px) 70vw, 100vw"
+            class="mapa-respaldo absolute inset-0 h-full w-full object-cover opacity-70 [image-rendering:pixelated]" />
+          <p class="mapa-respaldo etiqueta absolute bottom-4 left-4 rounded bg-noche/80 px-2 py-1 text-noche-suave">{t.cargando}</p>
+        </div>
+      </div>
+
+      <aside class="flex flex-col gap-8 lg:col-span-3" aria-label="Controles del mapa">
+        <fieldset>
+          <legend class="etiqueta text-noche-suave">Capa</legend>
+          <div class="mt-3 inline-flex rounded-full border border-noche-linea p-1">
+            {(['especies', 'huerto'] as const).map((k, i) => (
+              <label class="cursor-pointer">
+                <input type="radio" name="capa" value={k} checked={i === 0} class="peer sr-only" />
+                <span class="block rounded-full px-4 py-1.5 text-sm text-noche-suave transition peer-checked:bg-brillo peer-checked:text-noche peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-brillo">
+                  {t.capas[k]}
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <div>
+          <label for="opacidad" class="etiqueta text-noche-suave">{t.opacidad}</label>
+          <input id="opacidad" type="range" min="0" max="100" value="85" class="mt-3 w-full accent-[#5ee39a]" />
+        </div>
+
+        <div>
+          <p class="etiqueta text-noche-suave">Leyenda</p>
+          <ul id="leyenda-especies" class="mt-3 grid grid-cols-2 gap-x-3 gap-y-2 text-sm lg:grid-cols-1">
+            {ESPECIES.map((e) => (
+              <li class="flex items-center gap-2.5">
+                <span class="h-3 w-3 shrink-0 rounded-[2px]" style={`background:${e.color}`} aria-hidden="true"></span>{e.nombre}
+              </li>
+            ))}
+          </ul>
+          <ul id="leyenda-huerto" class="mt-3 hidden text-sm">
+            <li class="flex items-center gap-2.5">
+              <span class="h-3 w-3 rounded-[2px]" style={`background:${HUERTO}`} aria-hidden="true"></span>Huerto frutal
+            </li>
+          </ul>
+        </div>
+
+        <p class="text-xs leading-relaxed text-noche-suave">{t.ayuda} {t.fondo}</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<script>
+  type Config = {
+    bounds: [number, number, number, number];
+    minzoom: number;
+    maxzoom: number;
+    tiles: { especies: string; huerto: string };
+  };
+
+  const el = document.getElementById('mapa-lienzo') as HTMLElement;
+  const cfg = JSON.parse(el.dataset.config!) as Config;
+
+  async function iniciar() {
+    const [{ default: maplibregl }] = await Promise.all([
+      import('maplibre-gl'),
+      import('maplibre-gl/dist/maplibre-gl.css'),
+    ]);
+    const [w, s, e, n] = cfg.bounds;
+    const pad = 0.12;
+    const overlay = (tiles: string) => ({
+      type: 'raster' as const,
+      tiles: [tiles],
+      tileSize: 256,
+      bounds: cfg.bounds,
+      minzoom: cfg.minzoom,
+      maxzoom: cfg.maxzoom,
+    });
+
+    const map = new maplibregl.Map({
+      container: el,
+      bounds: cfg.bounds,
+      fitBoundsOptions: { padding: 20 },
+      maxBounds: [w - pad, s - pad, e + pad, n + pad],
+      minZoom: 9,
+      maxZoom: 16,
+      cooperativeGestures: true,
+      attributionControl: { compact: true },
+      locale: {
+        'CooperativeGesturesHandler.WindowsHelpText': 'Use Ctrl + rueda para acercar el mapa',
+        'CooperativeGesturesHandler.MacHelpText': 'Use ⌘ + rueda para acercar el mapa',
+        'CooperativeGesturesHandler.MobileHelpText': 'Use dos dedos para mover el mapa',
+        'NavigationControl.ZoomIn': 'Acercar',
+        'NavigationControl.ZoomOut': 'Alejar',
+      },
+      style: {
+        version: 8,
+        sources: {
+          fondo: {
+            type: 'raster',
+            tiles: ['https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2020_3857/default/g/{z}/{y}/{x}.jpg'],
+            tileSize: 256,
+            maxzoom: 15,
+            attribution:
+              '<a href="https://s2maps.eu" target="_blank" rel="noopener">Sentinel-2 cloudless</a> de EOX IT Services (contiene datos modificados de Copernicus Sentinel 2020)',
+          },
+          especies: overlay(cfg.tiles.especies),
+          huerto: overlay(cfg.tiles.huerto),
+        },
+        layers: [
+          { id: 'fondo', type: 'raster', source: 'fondo', paint: { 'raster-saturation': -0.35, 'raster-brightness-max': 0.8 } },
+          { id: 'especies', type: 'raster', source: 'especies', paint: { 'raster-opacity': 0.85, 'raster-resampling': 'nearest' } },
+          { id: 'huerto', type: 'raster', source: 'huerto', layout: { visibility: 'none' }, paint: { 'raster-opacity': 0.85, 'raster-resampling': 'nearest' } },
+        ],
+      },
+    });
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
+    map.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-left');
+    map.once('load', () => el.querySelectorAll('.mapa-respaldo').forEach((n) => n.remove()));
+
+    const opacidad = document.getElementById('opacidad') as HTMLInputElement;
+    const capaActual = () =>
+      (document.querySelector('input[name="capa"]:checked') as HTMLInputElement).value as 'especies' | 'huerto';
+
+    document.querySelectorAll<HTMLInputElement>('input[name="capa"]').forEach((r) =>
+      r.addEventListener('change', () => {
+        const capa = capaActual();
+        for (const id of ['especies', 'huerto'] as const) {
+          map.setLayoutProperty(id, 'visibility', id === capa ? 'visible' : 'none');
+        }
+        document.getElementById('leyenda-especies')!.classList.toggle('hidden', capa !== 'especies');
+        document.getElementById('leyenda-huerto')!.classList.toggle('hidden', capa !== 'huerto');
+      }),
+    );
+    opacidad.addEventListener('input', () => {
+      const v = Number(opacidad.value) / 100;
+      for (const id of ['especies', 'huerto']) map.setPaintProperty(id, 'raster-opacity', v);
+    });
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (entries.some((x) => x.isIntersecting)) {
+        io.disconnect();
+        iniciar().catch((err) => console.error('[mapa]', err));
+      }
+    },
+    { rootMargin: '300px' },
+  );
+  io.observe(el);
+</script>

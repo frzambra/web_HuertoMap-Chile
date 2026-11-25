@@ -1,0 +1,61 @@
+---
+import Cabecera from './Cabecera.astro';
+import { cobertura as t } from '../data/textos';
+const rolTexto: Record<string, string> = t.leyenda;
+const rolClase: Record<string, string> = {
+  piloto: 'bg-acento text-fondo',
+  extension: 'border border-acento text-acento',
+  mapa: 'border border-linea text-suave',
+};
+---
+<section aria-labelledby="cobertura" class="border-t border-linea py-24 sm:py-32">
+  <div class="contenedor">
+    <Cabecera id="cobertura" antetitulo={t.antetitulo} titulo={t.titulo} bajada={t.bajada} />
+
+    <div class="mt-16 grid gap-12 lg:grid-cols-12">
+      <!-- Regions north to south, as a vertical strip like the country -->
+      <div class="lg:col-span-8" data-revelar>
+        <table class="w-full border-collapse text-left">
+          <caption class="sr-only">Regiones, su rol en el proyecto y los catastros usados, de norte a sur</caption>
+          <thead>
+            <tr class="border-b border-texto/80 text-sm">
+              <th scope="col" class="py-3 pr-3 font-medium">{t.cabeceras.region}</th>
+              <th scope="col" class="py-3 pr-3 font-medium">{t.cabeceras.rol}</th>
+              <th scope="col" class="hidden py-3 pr-3 font-medium sm:table-cell">{t.cabeceras.catastros}</th>
+              <th scope="col" class="py-3 text-right font-medium">{t.cabeceras.mapa}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {t.regiones.map((r) => (
+              <tr class="border-b border-linea">
+                <th scope="row" class="py-3.5 pr-3 font-medium">{r.nombre}</th>
+                <td class="py-3.5 pr-3">
+                  <span class={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium ${rolClase[r.rol]}`}>{rolTexto[r.rol]}</span>
+                </td>
+                <td class="hidden py-3.5 pr-3 font-mono text-sm text-suave sm:table-cell">{r.catastros}</td>
+                <td class="py-3.5 text-right">
+                  {r.mapa
+                    ? <span class="inline-block h-2.5 w-2.5 rounded-sm bg-brillo" role="img" aria-label="Sí"></span>
+                    : <span class="text-suave" aria-label="No">–</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="lg:col-span-4" data-revelar>
+        <p class="etiqueta text-suave">Próximos hitos</p>
+        <ol class="mt-6 space-y-8 border-l border-linea pl-6">
+          {t.hitos.map((h) => (
+            <li class="relative">
+              <span class="absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-acento bg-fondo" aria-hidden="true"></span>
+              <p class="font-mono text-sm text-acento">{h.fecha}</p>
+              <p class="mt-1.5 leading-relaxed text-suave">{h.texto}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,12 @@
+---
+// Section heading: mono eyebrow + title + optional lead.
+interface Props { antetitulo: string; titulo: string; bajada?: string; id: string; oscuro?: boolean }
+const { antetitulo, titulo, bajada, id, oscuro = false } = Astro.props;
+---
+<div class="grid gap-6 lg:grid-cols-12" data-revelar>
+  <p class={`etiqueta lg:col-span-3 lg:pt-3 ${oscuro ? 'text-brillo' : 'text-acento'}`}>{antetitulo}</p>
+  <div class="lg:col-span-9">
+    <h2 id={id} class="max-w-3xl text-3xl font-semibold leading-tight sm:text-5xl">{titulo}</h2>
+    {bajada && <p class={`mt-5 max-w-2xl text-lg leading-relaxed ${oscuro ? 'text-noche-suave' : 'text-suave'}`}>{bajada}</p>}
+  </div>
+</div>
