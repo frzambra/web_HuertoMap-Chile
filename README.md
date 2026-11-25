@@ -12,10 +12,18 @@ npm run preview
 
 ## Mapa de muestra
 
-`scripts/tiles.py` recorta un mapa del proyecto de clasificación (solo lectura) y genera las teselas en
-`public/tiles/`, la imagen de portada `src/assets/mapa-especies.png` y los límites en `src/data/mapa.json`.
-Requiere Python con rasterio, pyproj y Pillow, y `gdal2tiles.py`. La paleta está en `scripts/paleta.py`
-y debe coincidir con `src/data/especies.ts`.
+El mapa compara el Catastro Frutícola 2024 (izquierda) con la predicción (derecha) en Curicó y Molina.
+`scripts/tiles.py` recorta el mapa del proyecto de clasificación (solo lectura), rasteriza el catastro
+en la misma grilla de 10 m y genera las teselas en `public/tiles/{prediccion,catastro}-{especies,huerto}/`,
+la imagen de portada `src/assets/mapa-especies.png` y los límites en `src/data/mapa.json`:
+
+```bash
+conda run -n huertos python scripts/tiles.py
+```
+
+Requiere `gdal2tiles.py`. La paleta está en `scripts/paleta.py` y debe coincidir con `src/data/especies.ts`.
+El script imprime la razón de superficie mapa / catastro del recorte; si cambia, actualice `mapa.nota`
+en `src/data/textos.ts`.
 
 ## Publicación
 

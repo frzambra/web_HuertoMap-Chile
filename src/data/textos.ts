@@ -149,13 +149,21 @@ export const cobertura = {
 
 export const mapa = {
   antetitulo: 'Mapa',
-  titulo: 'Explore una muestra.',
+  titulo: 'Compare con el catastro.',
   bajada:
-    'Curicó y Molina, Región del Maule, temporada 2023/24. El mapa se hizo con modelos que no vieron esa temporada y sin usar su catastro.',
+    'Curicó y Molina, Región del Maule, temporada 2023/24. A la izquierda, el Catastro Frutícola 2024; a la derecha, el mapa hecho con modelos que no vieron esa temporada ni su catastro. Arrastre el divisor para comparar.',
+  // Short part always visible; the rest only from 640 px up.
+  rotulos: {
+    catastro: { corto: 'Catastro', resto: '2024' },
+    prediccion: { corto: 'Predicción', resto: 'HuertoMap' },
+  },
+  divisor: 'Divisor entre catastro y predicción',
   capas: { especies: 'Especie', huerto: 'Huerto' },
   opacidad: 'Opacidad',
   cargando: 'Cargando mapa…',
-  ayuda: 'Arrastre para mover; use + y − o la rueda para acercar.',
+  ayuda: 'Arrastre el mapa para moverlo; use + y − o Ctrl + rueda para acercar. El divisor también se mueve con las flechas del teclado.',
+  // scripts/tiles.py prints this ratio for the crop.
+  nota: 'En este recorte, la superficie frutal mapeada es 1,16 veces la del catastro. Parte de la diferencia corresponde a viñas para vino y huertos que el catastro no registra.',
   fondo: 'Fondo: Sentinel-2 cloudless 2020 de EOX.',
 };
 
@@ -187,5 +195,6 @@ export const pie = {
   creditos: [
     'Contiene datos modificados de Copernicus Sentinel.',
     'Datos de referencia: Catastro Frutícola, CIREN.',
+    'Mapa base: Sentinel-2 cloudless de EOX (CC BY-NC-SA 4.0).',
   ],
 };
